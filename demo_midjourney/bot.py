@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 
@@ -10,23 +11,11 @@ class MidjourneyBot:
     _APPLICATION_COMMMAND_VERSION = '1118961510123847772'
 
     def __init__(self, config_file='config.json'):
-        self._config = self._parse_json(config_file)
-        self._user_token = self._config.get('user_token', None)
-        self._server_id = self._config.get('server_id', None)
-        self._channel_id = self._config.get('channel_id', None)
-        self._proxy = self._config.get('proxy', None)
-        self._proxies = None
-        if self._proxy:
-            self._proxies = {
-                'http': self._proxy,
-                'https': self._proxy,
-            }
+        self._user_token = os.environ["USER_TOKEN"]
+        self._server_id = os.environ["SERVER_ID"]
+        self._channel_id = os.environ["CHANNEL_ID"]
 
         self._header = {'authorization': self._user_token}
-
-    def _parse_json(self, config):
-        with open(config, encoding='utf-8') as fp:
-            return json.load(fp)
 
     def content(self, message):
         return message['content']
@@ -46,7 +35,6 @@ class MidjourneyBot:
             response = requests.get(
                 url=image_url,
                 headers=self._header,
-                proxies=self._proxies,
                 timeout=30,
             )
             return response.status_code == 200
@@ -106,7 +94,6 @@ class MidjourneyBot:
             url=url,
             json=payload,
             headers=self._header,
-            proxies=self._proxies,
             timeout=30,
         )
         return response.status_code
@@ -130,7 +117,6 @@ class MidjourneyBot:
             url=url,
             json=payload,
             headers=self._header,
-            proxies=self._proxies,
             timeout=30,
         )
         return response.status_code
@@ -154,7 +140,6 @@ class MidjourneyBot:
             url=url,
             json=payload,
             headers=self._header,
-            proxies=self._proxies,
             timeout=30,
         )
         return response.status_code
@@ -164,7 +149,6 @@ class MidjourneyBot:
         response = requests.get(
             url=url,
             headers=self._header,
-            proxies=self._proxies,
             timeout=30,
         )
         return json.loads(response.text)
@@ -173,7 +157,6 @@ class MidjourneyBot:
         response = requests.get(
             url=image_url,
             headers=self._header,
-            proxies=self._proxies,
             timeout=30,
         )
         with open(image_filename, 'wb') as fp:
